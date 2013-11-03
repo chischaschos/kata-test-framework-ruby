@@ -9,6 +9,10 @@ describe Test do
     $describing = true
     Test.class_variable_set '@@html', []
     Test.class_variable_set '@@failed', []
+    Test.class_variable_set '@@failed', []
+    Test.class_variable_set '@@method_calls', {}
+    Test.class_variable_set '@@before_blocks', []
+    Test.class_variable_set '@@after_blocks', []
   end
 
   after { $stdout = STDOUT }
@@ -94,5 +98,82 @@ describe Test do
 
     end
   end
+
+  describe '#describe' do
+    specify do
+      Test.describe 'A behavior' do
+        puts 'Something happens here'
+      end
+    end
+  end
+
+  describe '#it' do
+    Test.it 'should output a message' do
+      puts 'Something happens here'
+    end
+  end
+
+  describe '#before' do
+    it 'should add a before block' do
+      Test.before do
+        puts 'A message'
+      end
+      expect(Test.class_variable_get '@@before_blocks').to have(1).item
+    end
+  end
+
+  describe '#after' do
+    it 'should add an after block' do
+      Test.after do
+        puts 'A message'
+      end
+      expect(Test.class_variable_get '@@after_blocks').to have(1).item
+    end
+  end
+
+  describe '#expect_tests_to_pass' do
+    specify do
+      Test.expect_tests_to_pass 'A message' do
+        puts 'Some message'
+      end
+    end
+  end
+
+  describe '#expect_tests_to_fail' do
+    specify do
+      Test.expect_tests_to_fail 'A message' do
+        puts 'Some message'
+      end
+    end
+  end
+
+  describe '#expect_error' do
+    specify do
+      Test.expect_error 'Expecting an error' do
+        puts 'What happened here'
+      end
+    end
+  end
+
+  describe '#expect_no_error' do
+    specify do
+      Test.expect_no_error 'Expecting an error' do
+        puts 'What happened here'
+      end
+    end
+  end
+
+  describe '#assert_equals' do
+    specify do
+      Test.assert_equals 1, 1, 'They are the same'
+    end
+  end
+
+  describe '#assert_not_equals' do
+    specify do
+      Test.assert_not_equals 1, 2, 'They are not the same'
+    end
+  end
+
 
 end
